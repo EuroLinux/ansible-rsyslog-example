@@ -1,0 +1,25 @@
+---
+# tasks file for rsyslog_client
+- name: Install rsyslog
+  yum:
+    state: present
+    name: rsyslog
+
+- name: Enable rsyslog
+  service:
+    name: rsyslog
+    enabled: yes
+
+- name: Remove forward.conf
+  file:
+    path: /etc/rsyslog.d/forward.conf
+    state: absent
+
+- name: Add config lines
+  lineinfile:
+    create: yes
+    line: "*.* @@{{item}}:{{rsyslog_port}}" 
+    path: /etc/rsyslog.d/forward.conf
+  notify: restart rsyslog 
+  loop: "{{groups['rsyslog-servers'] }}"
+

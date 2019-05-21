@@ -1,0 +1,5 @@
+---
+- name: Configure rsyslog clients
+  hosts: rsyslog-clients
+  roles:
+    - rsyslog_client
