@@ -1,0 +1,13 @@
+---
+# defaults file for rsyslog_server
+
+rsyslog_port: 514
+rsyslog_templates: [ 
+  {def: "$template MojSzablon,\"/var/log/external/%HOSTNAME%.log\"", dest: "*.* -?MojSzablon"},
+]
+rsyslog_config_lines: [ 
+  { 'regex': '^\$ModLoad imtcp', 'line': '$ModLoad imtcp'},
+  { 'regex': '^\$InputTCPServerRun*', 'line': '$InputTCPServerRun {{rsyslog_port}}'},
+]
+
+

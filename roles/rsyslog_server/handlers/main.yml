@@ -1,0 +1,10 @@
+---
+# handlers file for rsyslog_server
+- name: restart rsyslog
+  service:
+    name: rsyslog
+    state: restarted
+- name: restart firewalld 
+  service:
+    name: firewalld
+    state: restarted

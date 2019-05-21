@@ -1,0 +1,5 @@
+---
+- name: Configure rsyslog server
+  hosts: rsyslog-servers
+  roles:
+    - rsyslog_server

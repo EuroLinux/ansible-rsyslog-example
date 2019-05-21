@@ -1,0 +1,53 @@
+---
+# tasks file for rsyslog_server
+
+- name: Install rsyslog
+  yum:
+    state: present
+    name: rsyslog
+
+- name: Enable rsyslog
+  service:
+    name: rsyslog
+    enabled: yes
+
+- name: Configure tcp port on firewalld
+  firewalld:
+    port: "{{rsyslog_port}}/tcp"
+    permanent: yes
+    state: enabled
+  notify: restart firewalld
+
+- name: Configure the logrotation
+  copy:
+    src: external-rotate 
+    dest: /etc/logrotate.d/external-rotate
+    owner: root
+    group: root
+    mode: 0644
+
+
+- name: Enable tcp listening in /etc/rsyslog.conf
+  lineinfile:
+    path: /etc/rsyslog.conf
+    regexp: "{{item.regex}}"
+    line: "{{item.line}}"
+  loop: "{{rsyslog_config_lines}}"
+  notify: restart rsyslog 
+
+- name: Remove templates.conf
+  file:
+    path: /etc/rsyslog.d/templates.conf
+    state: absent
+
+- name: Add config lines
+  blockinfile:
+    create: yes
+    path: /etc/rsyslog.d/templates.conf
+    block: |
+      {{item.def}}
+      {{item.dest}}
+    marker: ""
+  loop: "{{rsyslog_templates}}"
+  notify: restart rsyslog 
+    
